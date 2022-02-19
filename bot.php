@@ -7,6 +7,8 @@ require __DIR__."/lib.php";
 $j = json_decode(file_get_contents("php://input"), true);
 // $j = json_decode(file_get_contents(__DIR__."/test.json"), true);
 
+$ret = 0;
+
 if (isset($j["message"]["text"]))
 	$ret = handle_text_response($j);
 
