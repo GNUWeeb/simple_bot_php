@@ -1,0 +1,3 @@
+[submodule "worldometers_scraper"]
+	path = worldometers_scraper
+	url = https://github.com/GNUWeeb/worldometers_scraper
