@@ -1,7 +1,7 @@
 <?php
 // SPDX-License-Identifier: GPL-2.0-only
 
-// require __DIR__."/config.php";
+require_once __DIR__."/config.php";
 const API_BASE_URL = "https://api.telegram.org/bot".TOKEN_BOT;
 
 function curl(string $url, array $opt = []): ?string
@@ -49,21 +49,24 @@ function sendMessage(string $text, int $chatId, array $extra = []): ?array
 	return json_decode($out, true);
 }
 
-function send_covid19_data(int $chatId, string $country): ?array
+function send_covid19_data(int $chatId, string $country, int $msgId): ?array
 {
 	$raw  = file_get_contents(__DIR__."/worldometers_scraper/covid19.json");
 	$json = json_decode($raw, true);
 
-	$ref = &$json[$country];
+	$ref = &$json[strtolower($country)];
 	if (!isset($ref)) {
 		$text = "Country <code>{$country}</code> does not exist";
-		return sendMessage($text, $chatId, ["parse_mode" => "HTML"]);
+	} else {
+		$text = "<b>Data COVID-19 for {$country}</b>\n".
+			"<code>CMT:</code> {$ref["cmt"]}\n".
+			"<code>FST:</code> {$ref["fst"]}\n".
+			"<code>SDT:</code> {$ref["sdt"]}";
 	}
-
-	$text = "<b>Data COVID-19 for {$country}</b>\n".
-		"<code>CMT:</code> {$ref["cmt"]}\n".
-		"<code>FST:</code> {$ref["fst"]}\n".
-		"<code>SDT:</code> {$ref["sdt"]}";
-
-	return sendMessage($text, $chatId, ["parse_mode" => "HTML"]);
+	return sendMessage($text, $chatId,
+		[
+			"parse_mode" => "HTML",
+			"reply_to_message_id" => $msgId
+		]
+	);
 }
