@@ -6,3 +6,9 @@ require __DIR__."/lib.php";
 $json = json_decode(file_get_contents("php://input"), true);
 
 file_put_contents(__DIR__."/public/json.json", json_encode($json, JSON_PRETTY_PRINT));
+
+
+return [
+	"code" => 200,
+	"msg" => "Success!"
+];

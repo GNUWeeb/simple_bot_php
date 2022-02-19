@@ -14,7 +14,9 @@ if ($_GET["key"] !== WEBHOOK_KEY) {
 	goto out;
 }
 
-require __DIR__."/../bot.php";
+$arr  = require __DIR__."/../bot.php";
+$code = $arr["code"];
+$msg  = $arr["msg"];
 
 out:
 http_response_code($code);
