@@ -1,6 +1,7 @@
 <?php
 // SPDX-License-Identifier: GPL-2.0-only
 
+// require __DIR__."/config.php";
 require __DIR__."/lib.php";
 
 $j = json_decode(file_get_contents("php://input"), true);

@@ -1,7 +1,7 @@
 <?php
 // SPDX-License-Identifier: GPL-2.0-only
 
-require __DIR__."/config.php";
+// require __DIR__."/config.php";
 const API_BASE_URL = "https://api.telegram.org/bot".TOKEN_BOT;
 
 function curl(string $url, array $opt = []): ?string
@@ -55,9 +55,10 @@ function send_covid19_data(int $chatId, string $country): ?array
 	$json = json_decode($raw, true);
 
 	$ref = &$json[$country];
-	if (!isset($ref))
-		return NULL;
-
+	if (!isset($ref)) {
+		$text = "Country <code>{$country}</code> does not exist";
+		return sendMessage($text, $chatId, ["parse_mode" => "HTML"]);
+	}
 
 	$text = "<b>Data COVID-19 for {$country}</b>\n".
 		"<code>CMT:</code> {$ref["cmt"]}\n".
@@ -66,14 +67,3 @@ function send_covid19_data(int $chatId, string $country): ?array
 
 	return sendMessage($text, $chatId, ["parse_mode" => "HTML"]);
 }
-
-// function main(): int
-// {
-// 	$ret = 0;
-// 	$out = send_covid19_data(-1001347566306, "USA");
-// 	var_dump($out);
-
-// 	return $ret;
-// }
-
-// exit(main());
