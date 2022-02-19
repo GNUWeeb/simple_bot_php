@@ -3,12 +3,23 @@
 
 require __DIR__."/lib.php";
 
-$json = json_decode(file_get_contents("php://input"), true);
+$j = json_decode(file_get_contents("php://input"), true);
+// $j = json_decode(file_get_contents(__DIR__."/test.json"), true);
 
-file_put_contents(__DIR__."/public/json.json", json_encode($json, JSON_PRETTY_PRINT));
-
+if (isset($j["message"]["text"]))
+	$ret = handle_text_response($j);
 
 return [
-	"code" => 200,
-	"msg" => "Success!"
+	"code" => $ret,
+	"msg" => "handled!"
 ];
+
+function handle_text_response(array $j): int
+{
+	$text = $j["message"]["text"];
+
+	if (!preg_match("/\/cvd\s+(.+)$/", $text, $m))
+		return 1;
+	send_covid19_data($j["message"]["chat"]["id"], trim($m[1]));
+	return 0;
+}
