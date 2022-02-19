@@ -39,7 +39,7 @@ function sendMessage(string $text, int $chatId, array $extra = []): ?array
 			[
 				"text" => $text,
 				"chat_id" => $chatId
-			]
+			] + $extra
 		)
 	];
 	$out = curl(API_BASE_URL."/sendMessage", $opt);
@@ -49,10 +49,31 @@ function sendMessage(string $text, int $chatId, array $extra = []): ?array
 	return json_decode($out, true);
 }
 
-function main(): int
+function send_covid19_data(int $chatId, string $country): ?array
 {
-	$ret = 0;
-	return $ret;
+	$raw  = file_get_contents(__DIR__."/worldometers_scraper/covid19.json");
+	$json = json_decode($raw, true);
+
+	$ref = &$json[$country];
+	if (!isset($ref))
+		return NULL;
+
+
+	$text = "<b>Data COVID-19 for {$country}</b>\n".
+		"<code>CMT:</code> {$ref["cmt"]}\n".
+		"<code>FST:</code> {$ref["fst"]}\n".
+		"<code>SDT:</code> {$ref["sdt"]}";
+
+	return sendMessage($text, $chatId, ["parse_mode" => "HTML"]);
 }
 
-exit(main());
+// function main(): int
+// {
+// 	$ret = 0;
+// 	$out = send_covid19_data(-1001347566306, "USA");
+// 	var_dump($out);
+
+// 	return $ret;
+// }
+
+// exit(main());
